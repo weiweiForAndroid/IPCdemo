@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Client" />
+            <option value="$PROJECT_DIR$/Jobschedulerdemo" />
             <option value="$PROJECT_DIR$/MessengerDemo" />
             <option value="$PROJECT_DIR$/Service" />
           </set>
