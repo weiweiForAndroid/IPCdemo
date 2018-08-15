@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.*
 import android.support.v7.app.AppCompatActivity
 import android.support.annotation.RequiresApi
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
     var jobScheduler: JobScheduler? = null
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler?
         jobInfo = Builder(1, ComponentName(this, MyJobService::class.java))
                 .setOverrideDeadline(1 * 1000) //deadline
-                .setMinimumLatency(5*1000) //延迟执行
+                .setMinimumLatency(5 * 1000) //延迟执行
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED) //wifi 下执行
                 .build()
         jobScheduler?.schedule(jobInfo)
@@ -37,15 +38,24 @@ class MainActivity : AppCompatActivity() {
         messenger = Messenger(handler)
         val intent = Intent(this, MyJobService::class.java)
         intent.putExtra("messenger", messenger)
+        startService(intent)
     }
 
-    inner class InComingMessageHandler : Handler() {
+    override fun onStop() {
+        super.onStop()
+        stopService(Intent(this, MyJobService::class.java))
+    }
 
 
-        override fun handleMessage(msg: Message?) {
-            super.handleMessage(msg)
-
-
+    companion object {
+        class InComingMessageHandler : Handler() {
+            override fun handleMessage(msg: Message?) {
+                super.handleMessage(msg)
+                when (msg?.what) {
+                    1 -> Log.e("TAG", "收到来自jobService的message")
+                }
+            }
         }
     }
+
 }

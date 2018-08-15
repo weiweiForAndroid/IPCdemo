@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Message
 import android.os.Messenger
+import android.util.Log
 import android.widget.Toast
 
 /**
@@ -20,7 +21,7 @@ class MyJobService : JobService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         messenger = intent?.getParcelableExtra("messenger")
-
+        Log.e("Tag", "messenger::$messenger")
         return Service.START_STICKY
     }
 
@@ -39,7 +40,10 @@ class MyJobService : JobService() {
 
     private var handler = Handler {
         Toast.makeText(applicationContext, "JobService task running", Toast.LENGTH_SHORT).show()
-
+        val message = Message.obtain()
+        message.what = it.what
+        message.obj  = it.obj
+        messenger?.send(message)
         jobFinished(it.obj as JobParameters?, false)
 
         return@Handler true
